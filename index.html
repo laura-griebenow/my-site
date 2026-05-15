@@ -110,10 +110,188 @@
               snowboarding, or wakeboarding — or working on creative projects like
               weaving and embroidery.
             </p>
+
+            <!-- Weather widget -->
+            <div class="weather-card" id="weather-card">
+              <div class="weather-card__loading">Checking the weather…</div>
+            </div>
           </div>
         </div>
       </div>
     </section>
+
+    <style>
+      .weather-card {
+        margin-top: 2rem;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 1.5rem 1.75rem;
+        max-width: 420px;
+      }
+
+      .weather-card__loading {
+        font-size: 0.875rem;
+        color: var(--muted);
+      }
+
+      .weather-card__top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1rem;
+      }
+
+      .weather-card__location {
+        font-size: 0.7rem;
+        font-weight: 600;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+
+      .weather-card__condition {
+        font-size: 0.75rem;
+        color: var(--muted);
+      }
+
+      .weather-card__main {
+        display: flex;
+        align-items: flex-end;
+        gap: 1rem;
+        margin-bottom: 1rem;
+      }
+
+      .weather-card__emoji {
+        font-size: 2.8rem;
+        line-height: 1;
+      }
+
+      .weather-card__temp {
+        font-size: 3rem;
+        font-weight: 300;
+        letter-spacing: -0.04em;
+        line-height: 1;
+        color: var(--text);
+      }
+
+      .weather-card__temp sup {
+        font-size: 1.1rem;
+        font-weight: 400;
+        vertical-align: super;
+      }
+
+      .weather-card__feels {
+        font-size: 0.8rem;
+        color: var(--muted);
+        margin-bottom: 1.25rem;
+      }
+
+      .weather-card__divider {
+        height: 1px;
+        background: var(--border);
+        margin-bottom: 1.25rem;
+      }
+
+      .weather-card__activity-label {
+        font-size: 0.68rem;
+        font-weight: 600;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--muted);
+        margin-bottom: 0.4rem;
+      }
+
+      .weather-card__activity {
+        font-size: 1rem;
+        font-weight: 500;
+        color: var(--text);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .weather-card__activity-emoji {
+        font-size: 1.2rem;
+      }
+    </style>
+
+    <script>
+      (function () {
+        const LAT = 44.96949;
+        const LON = -93.26296;
+        const URL =
+          `https://api.open-meteo.com/v1/forecast?latitude=${LAT}&longitude=${LON}` +
+          `&current=temperature_2m,apparent_temperature,precipitation,cloud_cover,wind_speed_10m,is_day,snowfall` +
+          `&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max,snowfall_sum` +
+          `&temperature_unit=fahrenheit&wind_speed_unit=mph&precipitation_unit=inch&timezone=America%2FChicago&forecast_days=1`;
+
+        function getCondition(d) {
+          const { temperature_2m: temp, precipitation, cloud_cover, wind_speed_10m: wind, snowfall } = d;
+          if (snowfall > 0.1) return { label: 'Snowing',      emoji: '❄️' };
+          if (precipitation > 0.05) return { label: 'Rainy',  emoji: '🌧️' };
+          if (temp <= 32)           return { label: 'Freezing',emoji: '🥶' };
+          if (cloud_cover > 75)     return { label: 'Cloudy',  emoji: '☁️' };
+          if (cloud_cover > 35)     return { label: 'Partly Cloudy', emoji: '⛅' };
+          if (wind > 25)            return { label: 'Windy',   emoji: '💨' };
+          if (temp >= 85)           return { label: 'Hot & Sunny', emoji: '☀️' };
+          return { label: 'Clear',  emoji: d.is_day ? '☀️' : '🌙' };
+        }
+
+        function getActivity(d) {
+          const { temperature_2m: temp, precipitation, snowfall, wind_speed_10m: wind } = d;
+          const isRaining   = precipitation > 0.05;
+          const isSnowing   = snowfall > 0.1;
+          const isCold      = temp < 28;
+          const isTooWindy  = wind > 30;
+          const isGoodSnow  = isSnowing || (temp <= 32 && temp >= 15);
+          const isWarm      = temp >= 65 && temp <= 95;
+          const isHot       = temp > 80;
+
+          if (isRaining || isTooWindy) return { name: 'Weaving',     emoji: '🧶', type: 'inside' };
+          if (isCold && !isGoodSnow)   return { name: 'Embroidery',  emoji: '🪡', type: 'inside' };
+          if (isGoodSnow)              return { name: 'Snowboarding',emoji: '🏂', type: 'outside' };
+          if (isHot && isWarm)         return { name: 'Wakeboarding',emoji: '🏄', type: 'outside' };
+          if (isWarm)                  return { name: 'Biking',       emoji: '🚴', type: 'outside' };
+          return { name: 'Weaving', emoji: '🧶', type: 'inside' };
+        }
+
+        fetch(URL)
+          .then(function (res) {
+            if (!res.ok) throw new Error('Network error');
+            return res.json();
+          })
+          .then(function (data) {
+            const c = data.current;
+            const condition = getCondition(c);
+            const activity  = getActivity(c);
+            const temp      = Math.round(c.temperature_2m);
+            const feels     = Math.round(c.apparent_temperature);
+
+            const card = document.getElementById('weather-card');
+            card.innerHTML =
+              '<div class="weather-card__top">' +
+                '<span class="weather-card__location">Minneapolis, MN</span>' +
+                '<span class="weather-card__condition">' + condition.label + '</span>' +
+              '</div>' +
+              '<div class="weather-card__main">' +
+                '<span class="weather-card__emoji">' + condition.emoji + '</span>' +
+                '<div class="weather-card__temp">' + temp + '<sup>°F</sup></div>' +
+              '</div>' +
+              '<div class="weather-card__feels">Feels like ' + feels + '°F</div>' +
+              '<div class="weather-card__divider"></div>' +
+              '<div class="weather-card__activity-label">What Laura should be doing right now</div>' +
+              '<div class="weather-card__activity">' +
+                '<span class="weather-card__activity-emoji">' + activity.emoji + '</span>' +
+                activity.name +
+              '</div>';
+          })
+          .catch(function () {
+            const card = document.getElementById('weather-card');
+            card.innerHTML = '<div class="weather-card__loading">Weather unavailable right now.</div>';
+          });
+      })();
+    </script>
 
 
   </main>
