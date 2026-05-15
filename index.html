@@ -11,6 +11,19 @@
 </head>
 <body>
 
+  <!-- Passcode gate -->
+  <div class="gate" id="gate">
+    <div class="gate__card">
+      <p class="gate__logo">Laura<span>.</span></p>
+      <h1 class="gate__heading">Enter passcode</h1>
+      <div class="gate__field">
+        <input class="gate__input" id="gate-input" type="password" placeholder="••••••" autocomplete="off" autofocus>
+        <button class="gate__btn" id="gate-btn">Enter</button>
+      </div>
+      <p class="gate__error" id="gate-error">Incorrect passcode. Try again.</p>
+    </div>
+  </div>
+
   <nav class="nav">
     <div class="nav__inner">
       <a href="index.html" class="nav__logo">Hello there<span>.</span></a>

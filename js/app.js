@@ -1,3 +1,38 @@
+// ── Passcode gate ───────────────────────────
+(function () {
+  var PASSCODE = 'Hello!';
+  var gate     = document.getElementById('gate');
+  var input    = document.getElementById('gate-input');
+  var btn      = document.getElementById('gate-btn');
+  var error    = document.getElementById('gate-error');
+
+  if (sessionStorage.getItem('unlocked') === '1') {
+    gate.classList.add('gate--hidden');
+    return;
+  }
+
+  function attempt() {
+    if (input.value === PASSCODE) {
+      sessionStorage.setItem('unlocked', '1');
+      gate.classList.add('gate--hidden');
+    } else {
+      input.classList.add('gate__input--error');
+      error.classList.add('gate__error--visible');
+      input.value = '';
+      input.focus();
+      setTimeout(function () {
+        input.classList.remove('gate__input--error');
+      }, 600);
+    }
+  }
+
+  btn.addEventListener('click', attempt);
+  input.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') attempt();
+  });
+})();
+
+// ── Weather widget ────────────────────────────
 (function () {
   const LAT = 44.96949;
   const LON = -93.26296;
