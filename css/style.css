@@ -556,3 +556,99 @@ ul { list-style: none; }
   .skills-grid { grid-template-columns: 1fr; }
   .footer__inner { flex-direction: column; gap: 1rem; text-align: center; }
 }
+
+/* ── Weather card ────────────────────────── */
+
+.weather-card {
+  margin-top: 2rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.5rem 1.75rem;
+  max-width: 420px;
+}
+
+.weather-card__loading {
+  font-size: 0.875rem;
+  color: var(--muted);
+}
+
+.weather-card__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.weather-card__location {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.weather-card__condition {
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+.weather-card__main {
+  display: flex;
+  align-items: flex-end;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.weather-card__emoji {
+  font-size: 2.8rem;
+  line-height: 1;
+}
+
+.weather-card__temp {
+  font-size: 3rem;
+  font-weight: 300;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  color: var(--text);
+}
+
+.weather-card__temp sup {
+  font-size: 1.1rem;
+  font-weight: 400;
+  vertical-align: super;
+}
+
+.weather-card__feels {
+  font-size: 0.8rem;
+  color: var(--muted);
+  margin-bottom: 1.25rem;
+}
+
+.weather-card__divider {
+  height: 1px;
+  background: var(--border);
+  margin-bottom: 1.25rem;
+}
+
+.weather-card__activity-label {
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 0.4rem;
+}
+
+.weather-card__activity {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.weather-card__activity-emoji {
+  font-size: 1.2rem;
+}
